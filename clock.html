@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Base Twelve Clock</title>
+        <meta charset="utf-8" />
+        <style>
+            body {
+                background-color: black;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+
+            table {
+                background-color: black;
+				color: white;
+            }
+
+            th {
+                width: 30%;
+                text-align: right;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+
+            td {
+                width: 30%;
+                text-align: right;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+
+            th.wider {
+                width: 40%;
+                text-align: right;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+
+            summary {
+                color: white;
+				background-color: black;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 16px;
+            }
+
+            input {
+                text-align: right;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+			#clockSection {
+				display: block;
+				background-color: black;
+				width:400px;
+			}
+			#inputSection {
+				display: block;
+				background-color: black;
+			}
+        </style>
+    </head>
+
+    <body id="body">
+        <div id="clockSection">
+            <canvas id="myCanvas" width="300" height="300"></canvas>
+            <br />
+            <table id="readoutTable">
+                <tr>
+                    <th style="width:50%; text-align:center;">Decimal</th>
+                    <th style="width:50%; text-align:center;">Dozenal</th>
+                </tr>
+                <tr>
+                    <td style="width:50%; text-align:center;"><span id="decTime">B</span></td>
+                    <td style="width:50%; text-align:center;"><span id="dozTime">A</span></td>
+                </tr>
+            </table>
+        </div>
+		<div id="inputSection">
+            <details>
+                <summary><input name="showHabits" id="showHabits" type="checkbox" checked />&nbsp;My Habits</summary>
+				<table>
+                    <tr>
+                        <th>Category</th>
+                        <th class="wider">Decimal</th>
+                        <th>Dozenal</th>
+                    </tr>
+                    <tr>
+                        <td>Wake Up</td>
+                        <td>
+                            <input name="decWakeUpHour" id="decWakeUpHour" type="number" min="00" max="23" value="07" style="width: 30px;" required />:
+                            <input name="decWakeUpMinute" id="decWakeUpMinute" type="number" min="00" max="59" value="00" style="width: 30px;" required />
+                        </td>
+                        <td><span id="dozWakeUp">I</span></td>
+                    </tr>
+                    <tr>
+                        <td>Bedtime</td>
+                        <td>
+                            <input name="decBedtimeHour" id="decBedtimeHour" type="number" min="00" max="23" value="22" style="width: 30px;" required />:
+                            <input name="decBedtimeMinute" id="decBedtimeMinute" type="number" min="00" max="59" value="00" style="width: 30px;" required />
+                        </td>
+                        <td><span id="dozBedtime">K</span></td>
+                    </tr>
+                </table>
+            </details>
+            <details>
+                <summary><input name="showSolarEvents" id="showSolarEvents" type="checkbox" checked />&nbsp;Solar Events</summary>
+                <table>
+                    <tr>
+                        <th>Category</th>
+                        <th class="wider">Decimal</th>
+                        <th>Dozenal</th>
+                    </tr>
+                    <tr>
+                        <td>Twilight Begin</td>
+                        <td><span id="decTwilightBegin">D</span></td>
+                        <td><span id="dozTwilightBegin">C</span></td>
+                    </tr>
+                    <tr>
+                        <td>Sunrise</td>
+                        <td><span id="decSunrise">D</span></td>
+                        <td><span id="dozSunrise">C</span></td>
+                    </tr>
+                    <tr>
+                        <td>Noon</td>
+                        <td><span id="decSunNoon">F</span></td>
+                        <td><span id="dozSunNoon">E</span></td>
+                    </tr>
+                    <tr>
+                        <td>Sunset</td>
+                        <td><span id="decSunset">H</span></td>
+                        <td><span id="dozSunset">G</span></td>
+                    </tr>
+                    <tr>
+                        <td>Twilight End</td>
+                        <td><span id="decTwilightEnd">D</span></td>
+                        <td><span id="dozTwilightEnd">C</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="latitudeIn">Latitude:</label>
+                        </td>
+                        <td>
+                            <input name="latitudeIn" id="latitudeIn" type="text" maxlength="9" size="8" value="undefined" required />
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="longitudeIn">Longitude:</label>
+                        </td>
+                        <td>
+                            <input name="longitudeIn" id="longitudeIn" type="text" maxlength="9" size="8" value="undefined" required />
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">
+                            <input name="recalculateSolarButton" id="recalculateSolarButton" type="button" value="Re-Calculate Solar Events" />
+                        </td>
+                    </tr>
+                </table>
+            </details>
+            <details>
+                <summary>Hands</summary>
+                <table>
+                    <tr>
+                        <th width="30%">Hand</th>
+                        <th width="60%">Display</th>
+                    </tr>
+                    <tr>
+                        <td>First</td>
+                        <td>
+                            <input name="hand1" id="hand1" type="checkbox" checked />
+                        </td>
+
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>Second</td>
+                        <td>
+                            <input name="hand2" id="hand2" type="checkbox" checked />
+                        </td>
+
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>Third</td>
+                        <td>
+                            <input name="hand3" id="hand3" type="checkbox" checked />
+                        </td>
+
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>Fourth</td>
+                        <td>
+                            <input name="hand4" id="hand4" type="checkbox" checked />
+                        </td>
+
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>Fifth</td>
+                        <td>
+                            <input name="hand5" id="hand5" type="checkbox" unchecked />
+                        </td>
+
+                        <td></td>
+                    </tr>
+                </table>
+            </details>
+            <table>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input name="resetButton" id="resetButton" type="button" value="Reset Values" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <script type="text/javascript">
+            const borderOffset = 2;
+            const constantRotation = 180; // Rotation of the clock face. 0 has noon at the bottom, 180 has noon at the top
+            const unciaCircle = Math.PI / 6; // One twelth of a circle
+            const numbers = ["3", "4", "5", "6", "7", "8", "9", "X", "E", "0", "1", "2"]; // Characters to display on the face of the clock
+            const defaultLatitude = "29.42396";
+            const defaultLongitude = "-98.48755";
+
+            var canvas;
+            var context;
+
+            const secondsPerDozenalDayUnit = (60 * 60 * 24) / 12 ** 5; // A day is divided into 12 to the 5th units
+
+            var latitude = defaultLatitude;
+            var longitude = defaultLongitude;
+
+            var initialDate = new Date("December 31, 1995 03:24:00"); // initial default value in the past
+            var today = initialDate; // initial default value in the past
+            var wakeup;
+            var bedtime;
+
+            var twilightBegin = today;
+            var sunrise = today;
+            var noon = today;
+            var sunset = today;
+            var twilightEnd = today;
+
+            var dozTwilightBegin = "Searching";
+            var decTwilightBegin = "Searching";
+            var dozSunrise = "Searching";
+            var decSunrise = "Searching";
+            var dozSunNoon = "Searching";
+            var decSunNoon = "Searching";
+            var dozSunset = "Searching";
+            var decSunset = "Searching";
+            var dozTwilightEnd = "Searching";
+            var decTwilightEnd = "Searching";
+
+            var canvasWidth;
+            var radiusLen;
+
+            var tickRadius, hand1Radius, hand2Radius, hand3Radius, hand4Radius, hand5Radius, numberRadius, bandInnerRadius, bandOuterRadius, numberRadius, outerRadius;
+
+            var tickLength;
+
+            var hand1Thickness, hand2Thickness, hand3Thickness, hand4Thickness, hand5Thickness;
+            var shadowThickness;
+
+            var numberFontSize;
+
+            var showHabitsEnabled = true,
+				showSolarEventsEnabled=true,
+				hand1Enabled = true,
+                hand2Enabled = true,
+                hand3Enabled = true,
+                hand4Enabled = true,
+                hand5Enabled = false;
+
+            // ========================================================================
+            // Clock functions
+            //
+            function degreesToRadians(degrees) {
+                return (Math.PI / 180) * degrees;
+            }
+
+            function drawCircle(centerx, centery, radius, color) {
+                context.save;
+                context.beginPath();
+                context.arc(centerx, centery, radius, 0, 2 * Math.PI);
+                if (color !== null) {
+                    context.fillstyle = color;
+                    context.fill();
+                } else {
+                    context.stroke();
+                }
+                context.restore;
+            }
+
+            function drawHand(size, thickness, fillStyle, rotationDegrees) {
+                context.save();
+
+                context.fillStyle = fillStyle;
+                context.strokeStyle = "#555";
+                context.shadowColor = "#555";
+                context.shadowBlur = shadowThickness;
+
+                context.rotate(degreesToRadians(rotationDegrees));
+
+                context.shadowOffsetX = 3;
+                context.shadowOffsetY = 3;
+                context.beginPath();
+                context.moveTo(0, 0); // center
+                thickness = thickness || 4;
+                context.lineTo(thickness * -1, -10);
+                context.lineTo(0, size * -1);
+                context.lineTo(thickness, -10);
+                context.lineTo(0, 0);
+                context.fill();
+                context.stroke();
+
+                context.restore();
+            }
+
+            function drawIcon(rotationDegrees, color) {
+                context.save();
+                var offset = (bandOuterRadius - bandInnerRadius) / 2;
+
+                context.fillStyle = color;
+                context.rotate(degreesToRadians(rotationDegrees + 90));
+                drawCircle(bandInnerRadius + offset, 0, offset, color);
+                context.stroke();
+
+                context.restore();
+            }
+
+            function drawBand(startDegrees, endDegrees, color) {
+                context.save();
+
+                context.linewidth = 6;
+
+                context.beginPath();
+                context.arc(0, 0, bandInnerRadius, degreesToRadians(startDegrees + 90), degreesToRadians(endDegrees + 90), 0);
+                context.arc(0, 0, bandOuterRadius, degreesToRadians(endDegrees + 90), degreesToRadians(startDegrees + 90), 1);
+                context.closePath();
+
+                if (color !== null) {
+                    context.fillStyle = color;
+                    context.fill();
+                } else {
+                    context.stroke();
+                }
+
+                context.restore();
+            }
+
+            function timeDegrees(date) {
+                return (360 / 24) * date.getHours() + (15 / 60) * date.getMinutes() + (0.25 / 60) * date.getSeconds();
+            }
+
+            function buildClockPieces(now) {
+                // Draw outside borders and infill
+                context.clearRect(-canvasWidth, canvasWidth, 2 * canvasWidth, -2 * canvasWidth);
+                context.rect(0, 0, canvasWidth, canvasWidth);
+                context.stroke();
+
+                context.fillStyle = "black";
+                context.fillRect(0, 0, canvasWidth, canvasWidth);
+                context.stroke();
+
+                //	context.rect(borderOffset, borderOffset, 2 * radiusLen, 2 * radiusLen);
+                //	context.stroke();
+
+                // Shift the center of the context to the middle of the clock, not the upper left corner
+                context.translate(canvasWidth / 2, canvasWidth / 2);
+
+                // Draw the circle of tick marks
+                context.save();
+				context.strokeStyle = 'white';
+                for (i = 0; i <= 144; i++) {
+                    context.lineWidth = 2;
+                    context.rotate((Math.PI * 2) / 144); // Rotate through 360 degrees in 144 intervals (each interval is 2.5 degrees)
+
+                    context.beginPath();
+                    // Draw a tick mark equal of a variable length depending on the tick interval
+                    // - Every twelfth tick (i counter modulus 12 equals 11) is three times longer than the unit tick
+                    // - Every sixth tick (i counter modulus 6 equals 5) is two times longer than the unit tick
+                    context.moveTo(tickRadius - (i % 12 === 11 ? 3 : i % 6 === 5 ? 2 : 1) * tickLength, 0);
+                    context.lineTo(tickRadius, 0);
+                    context.stroke();
+                    context.closePath();
+                }
+                context.restore();
+
+                // Write the numbers. Using sin and cos, we start numbering from the '3' position and move clockwise.
+                context.save();
+                context.font = numberFontSize + "pt Times";
+                for (i = 0; i < 12; i++) {
+                    index = (i + constantRotation / 30) % 12;
+                    xPosition = numberRadius * Math.cos((i * Math.PI) / 6) - context.measureText(numbers[index]).width / 2;
+                    yPosition = numberRadius * Math.sin((i * Math.PI) / 6) + numberFontSize / 2;
+                    context.fillStyle = "white";
+                    context.fillText(numbers[index], xPosition, yPosition);
+                }
+                context.restore();
+
+                var time = convertDateToBase12(now);
+
+                // Draw the hands, longest hand first
+                if (hand5Enabled) {
+                    drawHand(hand5Radius, hand5Thickness, "orange", ((time / 12 ** 0) % 12) * 30 + constantRotation);
+                }
+                if (hand4Enabled) {
+                    drawHand(hand4Radius, hand4Thickness, "red", ((time / 12 ** 1) % 12) * 30 + constantRotation); // 5th level hand
+                }
+                if (hand3Enabled) {
+                    drawHand(hand3Radius, hand3Thickness, "green", ((time / 12 ** 2) % 12) * 30 + constantRotation); // 4th level ahnd
+                }
+                if (hand2Enabled) {
+                    drawHand(hand2Radius, hand2Thickness, "blue", ((time / 12 ** 3) % 12) * 30 + constantRotation); // 3rd level hand
+                }
+                if (hand1Enabled) {
+                    drawHand(hand1Radius, hand1Thickness, "white", ((time / 12 ** 4) % 12) * 30 + constantRotation); // 2nd level hand
+                }
+
+                //Draw the bands
+                if (showSolarEventsEnabled) {
+					drawBand(timeDegrees(twilightBegin), timeDegrees(sunrise), "gray");
+					drawBand(timeDegrees(sunrise), timeDegrees(noon), "yellow");
+					drawBand(timeDegrees(noon), timeDegrees(sunset), "orange");
+					drawBand(timeDegrees(sunset), timeDegrees(twilightEnd), "red");
+					drawBand(timeDegrees(twilightEnd), timeDegrees(twilightBegin), "darkblue");
+				}
+
+                //	drawIcon(timeDegrees(sunrise), 'yellow');
+                //	drawIcon(timeDegrees(noon), 'white');
+                //	drawIcon(timeDegrees(sunset), 'red');
+
+                if (showHabitsEnabled) {
+					drawIcon(timeDegrees(wakeup), "white");
+					drawIcon(timeDegrees(bedtime), "green");
+				}
+
+                // Return the canvas to the upper right corner
+                context.translate(-canvasWidth / 2, -canvasWidth / 2);
+            }
+
+            // ========================================================================
+            // Text field functions
+            //
+            function decimalToDozenal(number) {
+                if (number === 10) {
+                    number = "X";
+                } else if (number === 11) {
+                    number = "E";
+                } else if (number === 12) {
+                    number = 10;
+                }
+                return number;
+            }
+
+            function convertDateToBase12(now) {
+                // 1. convert the current hours, minutes, and seconds into milliseconds
+                // 2. add the milliseconds
+                // 3. divide the milliseconds by the number of seconds per dozenal day unit
+                // 4. convert the milliseconds back into seconds
+                return Math.floor(((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds()) / secondsPerDozenalDayUnit) / 1000;
+            }
+
+            function baseTwelveTime(now) {
+                var time = convertDateToBase12(now);
+                var result = time,
+                    pentQuaTime = decimalToDozenal(Math.floor(time / 12 ** 4)),
+                    quadQuaTime = Math.floor((time % 12 ** 4) / 12 ** 2),
+                    biQuaTime = Math.floor(time % 12 ** 2),
+                    quadQuaTimeFirstDigit = decimalToDozenal(Math.floor(quadQuaTime / 12)),
+                    quadQuaTimeSecondDigit = decimalToDozenal(quadQuaTime % 12),
+                    biQuaTimeFirstDigit = decimalToDozenal(Math.floor(biQuaTime / 12)),
+                    biQuaTimeSecondDigit = decimalToDozenal(biQuaTime % 12);
+
+                result = pentQuaTime + "" + quadQuaTimeFirstDigit + "" + quadQuaTimeSecondDigit + "" + biQuaTimeFirstDigit + "" + biQuaTimeSecondDigit;
+
+                return result;
+            }
+
+            function baseTenTime(now) {
+                var minutes = "0" + now.getMinutes();
+                var seconds = "0" + now.getSeconds();
+                return now.getHours() + ":" + minutes.slice(-2) + ":" + seconds.slice(-2);
+            }
+
+            function buildTextPieces(now) {
+                var url = "https://api.sunrise-sunset.org/json?lat=" + latitude + "&lng=" + longitude + "&formatted=0";
+
+                if (now.getYear() + "/" + now.getMonth() + "/" + now.getDate() !== today.getYear() + "/" + today.getMonth() + "/" + today.getDate()) {
+                    today = now;
+                    fetch(url)
+                        .then((res) => res.json())
+                        .then((out) => {
+                            twilightBegin = new Date(out.results.nautical_twilight_begin);
+                            sunrise = new Date(out.results.sunrise);
+                            noon = new Date(out.results.solar_noon);
+                            sunset = new Date(out.results.sunset);
+                            twilightEnd = new Date(out.results.nautical_twilight_end);
+
+                            dozTwilightBegin = baseTwelveTime(twilightBegin);
+                            decTwilightBegin = baseTenTime(twilightBegin);
+                            dozSunrise = baseTwelveTime(sunrise);
+                            decSunrise = baseTenTime(sunrise);
+                            dozSunNoon = baseTwelveTime(noon);
+                            decSunNoon = baseTenTime(noon);
+                            dozSunset = baseTwelveTime(sunset);
+                            decSunset = baseTenTime(sunset);
+                            dozTwilightEnd = baseTwelveTime(twilightEnd);
+                            decTwilightEnd = baseTenTime(twilightEnd);
+                        })
+                        .catch((err) => console.error(err));
+                }
+
+                document.getElementById("dozTime").innerHTML = baseTwelveTime(now);
+                document.getElementById("decTime").innerHTML = baseTenTime(now);
+
+                document.getElementById("dozTwilightBegin").innerHTML = dozTwilightBegin;
+                document.getElementById("decTwilightBegin").innerHTML = decTwilightBegin;
+                document.getElementById("dozSunrise").innerHTML = dozSunrise;
+                document.getElementById("decSunrise").innerHTML = decSunrise;
+                document.getElementById("dozSunNoon").innerHTML = dozSunNoon;
+                document.getElementById("decSunNoon").innerHTML = decSunNoon;
+                document.getElementById("dozSunset").innerHTML = dozSunset;
+                document.getElementById("decSunset").innerHTML = decSunset;
+                document.getElementById("dozTwilightEnd").innerHTML = dozTwilightEnd;
+                document.getElementById("decTwilightEnd").innerHTML = decTwilightEnd;
+
+                document.getElementById("dozWakeUp").innerHTML = baseTwelveTime(wakeup);
+                document.getElementById("decWakeUpHour").innerHTML = wakeup.getHours();
+                document.getElementById("decWakeUpMinute").innerHTML = wakeup.getMinutes();
+                document.getElementById("dozBedtime").innerHTML = baseTwelveTime(bedtime);
+                document.getElementById("decBedtimeHour").innerHTML = bedtime.getHours();
+                document.getElementById("decBedtimeMinute").innerHTML = bedtime.getMinutes();
+            }
+
+            function defaultWakeup() {
+                return new Date("December 31, 1995 06:45:00");
+            }
+
+            function defaultBedtime() {
+                return new Date("December 31, 1995 22:00:00");
+            }
+
+            // Define sizes based on window size
+            function defineSizes() {
+                canvas = document.getElementById("myCanvas");
+                canvasWidth = canvasSize();
+
+                canvas.width = canvasWidth; // assuming a square
+                canvas.height = canvasWidth; // assuming a square
+
+				document.getElementById('clockSection').style.width=canvasWidth+'px';
+
+//                document.getElementById("readoutTable").width = canvasWidth;
+				document.getElementById('readoutTable').style.width=canvasWidth+'px';
+
+				document.getElementById('inputSection').style.width=canvasWidth+'px';
+
+                context = canvas.getContext("2d");
+
+                radius = canvasWidth / 2 - borderOffset;
+
+                radiusLen = (canvasWidth - 2 * borderOffset) / 2; // The radius of the circle filling the whole canvas
+                hand1Radius = radiusLen * 0.44;
+                hand2Radius = radiusLen * 0.49;
+                hand3Radius = radiusLen * 0.56;
+                hand4Radius = radiusLen * 0.63;
+                hand5Radius = radiusLen * 0.7;
+                tickRadius = radiusLen * 0.75;
+                numberRadius = radiusLen * 0.82;
+                bandInnerRadius = radiusLen * 0.89;
+                bandOuterRadius = radiusLen * 0.99;
+                outerRadius = radiusLen * 1.0;
+
+                tickLength = radiusLen * 0.04; // Each tick mark is a multiple of 4% of the canvas radius
+
+                hand1Thickness = radiusLen * 0.04;
+                hand2Thickness = radiusLen * 0.03;
+                hand3Thickness = radiusLen * 0.02;
+                hand4Thickness = radiusLen * 0.01;
+                hand5Thickness = radiusLen * 0.007;
+                shadowThickness = radiusLen * 0.7;
+
+                numberFontSize = canvasSize() * 0.046; // TBD - scale based on canvas size
+            }
+
+            // ========================================================================
+            //  Primary function called by setInterval
+            //
+            function buildThePage() {
+                var now = new Date();
+
+                defineSizes();
+
+                buildTextPieces(now);
+                buildClockPieces(now);
+
+                return 0;
+            }
+
+            function canvasSize() {
+                var result;
+                result = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+                return result * 0.95;
+            }
+
+            function setupEvents() {
+                wakeup = defaultWakeup();
+                bedtime = defaultBedtime();
+
+                var decWakeUpHour = document.getElementById("decWakeUpHour");
+                decWakeUpHour.addEventListener("change", (event) => {
+                    wakeup.setHours(document.getElementById("decWakeUpHour").value);
+                    buildThePage();
+                });
+
+                var decWakeUpMinute = document.getElementById("decWakeUpMinute");
+                decWakeUpMinute.addEventListener("change", (event) => {
+                    wakeup.setMinutes(document.getElementById("decWakeUpMinute").value);
+                    buildThePage();
+                });
+
+                var decBedtimeHour = document.getElementById("decBedtimeHour");
+                decBedtimeHour.addEventListener("change", (event) => {
+                    bedtime.setHours(document.getElementById("decBedtimeHour").value);
+                    buildThePage();
+                });
+
+                var decBedtimeMinute = document.getElementById("decBedtimeMinute");
+                decBedtimeMinute.addEventListener("change", (event) => {
+                    bedtime.setMinutes(document.getElementById("decBedtimeMinute").value);
+                    buildThePage();
+                });
+
+                var latitudeInput = document.getElementById("latitudeIn");
+                latitudeInput.addEventListener("change", (event) => {
+                    latitude = document.getElementById("latitudeIn").value;
+                });
+
+                var longitudeInput = document.getElementById("longitudeIn");
+                longitudeInput.addEventListener("change", (event) => {
+                    longitude = document.getElementById("longitudeIn").value;
+                });
+
+                var recalcButton = document.getElementById("recalculateSolarButton");
+                recalcButton.addEventListener("click", (event) => {
+                    today = initialDate;
+                    buildThePage();
+                });
+
+                var showSolarEventsCheckbox = document.getElementById("showSolarEvents");
+                showSolarEventsCheckbox.addEventListener("change", (event) => {
+                    showSolarEventsEnabled = showSolarEventsCheckbox.checked;
+                    buildThePage();
+                });
+
+                var showHabitsCheckbox = document.getElementById("showHabits");
+                showHabitsCheckbox.addEventListener("change", (event) => {
+                    showHabitsEnabled = showHabitsCheckbox.checked;
+                    buildThePage();
+                });
+
+                var hand1Checkbox = document.getElementById("hand1");
+                hand1Checkbox.addEventListener("change", (event) => {
+                    hand1Enabled = hand1Checkbox.checked;
+                    buildThePage();
+                });
+
+                var hand2Checkbox = document.getElementById("hand2");
+                hand2Checkbox.addEventListener("change", (event) => {
+                    hand2Enabled = hand2Checkbox.checked;
+                    buildThePage();
+                });
+
+                var hand3Checkbox = document.getElementById("hand3");
+                hand3Checkbox.addEventListener("change", (event) => {
+                    hand3Enabled = hand3Checkbox.checked;
+                    buildThePage();
+                });
+
+                var hand4Checkbox = document.getElementById("hand4");
+                hand4Checkbox.addEventListener("change", (event) => {
+                    hand4Enabled = hand4Checkbox.checked;
+                    buildThePage();
+                });
+
+                var hand5Checkbox = document.getElementById("hand5");
+                hand5Checkbox.addEventListener("change", (event) => {
+                    hand5Enabled = hand5Checkbox.checked;
+                    buildThePage();
+                });
+
+                var resetButton = document.getElementById("resetButton");
+                resetButton.addEventListener("click", (event) => {
+                    wakeup = defaultWakeup();
+                    bedtime = defaultBedtime();
+
+                    document.getElementById("decWakeUpHour").value = wakeup.getHours();
+                    document.getElementById("decWakeUpMinute").value = wakeup.getMinutes();
+
+                    document.getElementById("decBedtimeHour").value = bedtime.getHours();
+                    document.getElementById("decBedtimeMinute").value = bedtime.getMinutes();
+
+                    latitude = defaultLatitude;
+                    document.getElementById("latitudeIn").value = latitude;
+
+                    longitude = defaultLongitude;
+                    document.getElementById("longitudeIn").value = longitude;
+
+                    today = initialDate;
+
+					showSolarEventsEnabled = true;
+					showHabitsEnabled = true;
+                    hand1Enabled = true;
+                    hand2Enabled = true;
+                    hand3Enabled = true;
+                    hand4Enabled = true;
+                    hand5Enabled = false;
+
+                    document.getElementById("showHabits").checked = showHabitsEnabled;
+                    document.getElementById("showSolarEvents").checked = showSolarEventsEnabled;
+                    document.getElementById("hand1").checked = hand1Enabled;
+                    document.getElementById("hand2").checked = hand2Enabled;
+                    document.getElementById("hand3").checked = hand3Enabled;
+                    document.getElementById("hand4").checked = hand4Enabled;
+                    document.getElementById("hand5").checked = hand5Enabled;
+
+                    buildThePage();
+                });
+
+                decWakeUpHour.value = wakeup.getHours();
+                decWakeUpMinute.value = wakeup.getMinutes();
+
+                decBedtimeHour.value = bedtime.getHours();
+                decBedtimeMinute.value = bedtime.getMinutes();
+
+                latitudeInput.value = latitude;
+                longitudeInput.value = longitude;
+            }
+
+            setupEvents();
+            buildThePage();
+            interval = window.setInterval("buildThePage();", 100);
+        </script>
+    </body>
+</html>
