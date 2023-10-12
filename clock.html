@@ -227,7 +227,7 @@
         <script type="text/javascript">
             const borderOffset = 2;
             const constantRotation = 180; // Rotation of the clock face. 0 has noon at the bottom, 180 has noon at the top
-            const unciaCircle = Math.PI / 6; // One twelth of a circle
+            const unciaCircle = Math.PI / 6; // One twelfth of a circle
             const numbers = ["3", "4", "5", "6", "7", "8", "9", "X", "E", "0", "1", "2"]; // Characters to display on the face of the clock
             const defaultLatitude = "29.42396";
             const defaultLongitude = "-98.48755";
@@ -419,7 +419,7 @@
                     drawHand(hand4Radius, hand4Thickness, "red", ((time / 12 ** 1) % 12) * 30 + constantRotation); // 5th level hand
                 }
                 if (hand3Enabled) {
-                    drawHand(hand3Radius, hand3Thickness, "green", ((time / 12 ** 2) % 12) * 30 + constantRotation); // 4th level ahnd
+                    drawHand(hand3Radius, hand3Thickness, "green", ((time / 12 ** 2) % 12) * 30 + constantRotation); // 4th level hand
                 }
                 if (hand2Enabled) {
                     drawHand(hand2Radius, hand2Thickness, "blue", ((time / 12 ** 3) % 12) * 30 + constantRotation); // 3rd level hand
@@ -592,7 +592,7 @@
                 hand5Thickness = radiusLen * 0.007;
                 shadowThickness = radiusLen * 0.7;
 
-                numberFontSize = canvasSize() * 0.046; // TBD - scale based on canvas size
+                numberFontSize = canvasSize() * 0.046;
             }
 
             // ========================================================================
